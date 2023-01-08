@@ -7,7 +7,7 @@ export function Searchbar({ onSubmit }) {
         className={css.SearchForm}
         onSubmit={e => {
           e.preventDefault();
-          const [button, input] = e.target;
+          const input = e.target[1];
           onSubmit(input.value  || '');
         }}
       >
