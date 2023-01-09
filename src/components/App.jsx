@@ -3,50 +3,34 @@ import { ImageGallery } from './ImageGallery/ImageGallery';
 import { Searchbar } from './Searchbar/Searchbar';
 import { Button } from './Button/Button';
 import { Loader } from './Loader/Loader';
+import { fetchHandler } from 'Utils';
 
 export class App extends React.Component {
-  url = (query, page) =>
-    `https://pixabay.com/api/?q=${query}&page=${page}&key=30908520-61e3e7767732b591b87412aca&image_type=photo&orientation=horizontal&per_page=15`;
+  
+  state = {
+    query: '',
+    page: 1,
+    images: [],
+    isLoading: false,
+  };
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      images: [],
-      isLoading: false
-    };
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    if (
+      prevState.query !== this.state.query ||
+      prevState.page !== this.state.page
+    ) {
+      fetchHandler(this.state.query, this.state.page, this);
+    }
   }
 
   searchHandler = query => {
-    this.fetchHandler(query || '', 1);
+    const page = 1;
+    this.setState({ query, page });
   };
 
   buttonHandler = () => {
-    const query = this.state.query || '';
-    const page = (this.state.images.length - this.state.images.length % 15) / 15 + 1;
-    this.fetchHandler(query, page);
-  };
-
-  fetchHandler = (query, page) => {
-    fetch(this.url(query, page))
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('bad request');
-        }
-        this.setState({ isLoading: true });
-        return response.json();
-      })
-      .then(data => {
-        this.state.query === query
-          ? this.setState({
-              images: [...this.state.images, ...data.hits],
-            })
-          : this.setState({
-              images: data.hits,
-              query,
-            });
-      })
-      .catch(e => console.log(e))
-      .finally(() => this.setState({ isLoading: false }));
+    const page = this.state.page + 1;
+    this.setState({ page });
   };
 
   render() {
@@ -54,8 +38,10 @@ export class App extends React.Component {
       <>
         <Searchbar onSubmit={this.searchHandler} />
         <ImageGallery images={this.state.images} />
-        <Loader visible={this.state.isLoading}/>
-        <Button buttonHandler={this.buttonHandler} />
+        <Loader visible={this.state.isLoading} />
+        {this.state.images.length !== 0 && (
+          <Button buttonHandler={this.buttonHandler} />
+        )}
       </>
     );
   }
