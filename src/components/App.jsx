@@ -6,12 +6,12 @@ import { Loader } from './Loader/Loader';
 import { fetchHandler } from 'Utils';
 
 export class App extends React.Component {
-  
   state = {
     query: '',
     page: 1,
     images: [],
     isLoading: false,
+    isLoadMoreShowing: false,
   };
 
   componentDidUpdate(prevProps, prevState, snapshot) {
@@ -25,11 +25,13 @@ export class App extends React.Component {
 
   searchHandler = query => {
     const page = 1;
+    this.setState({ images: [], isLoadMoreShowing: false });
     this.setState({ query, page });
   };
 
   buttonHandler = () => {
     const page = this.state.page + 1;
+    this.setState({isLoadMoreShowing: false})
     this.setState({ page });
   };
 
@@ -39,7 +41,7 @@ export class App extends React.Component {
         <Searchbar onSubmit={this.searchHandler} />
         <ImageGallery images={this.state.images} />
         <Loader visible={this.state.isLoading} />
-        {this.state.images.length !== 0 && (
+        {this.state.isLoadMoreShowing && (
           <Button buttonHandler={this.buttonHandler} />
         )}
       </>

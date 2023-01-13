@@ -16,10 +16,14 @@ export function fetchHandler(query, page, app) {
         return { id, webformatURL, tags };
       });
       if (page === 1) {
-        app.setState({ images: dataImages });
+        app.setState({ 
+          images: dataImages,
+          isLoadMoreShowing: true
+        });
       } else {
         app.setState({
           images: [...app.state.images, ...dataImages],
+          isLoadMoreShowing: true
         });
       }
     })
