@@ -27,11 +27,13 @@ export class App extends React.Component {
     const page = 1;
     this.setState({ images: [], isLoadMoreShowing: false });
     this.setState({ query, page });
+    this.setState({isLoading: true})
   };
 
   buttonHandler = () => {
     const page = this.state.page + 1;
-    this.setState({isLoadMoreShowing: false})
+    this.setState({isLoadMoreShowing: false});
+    this.setState({isLoading: true})
     this.setState({ page });
   };
 
